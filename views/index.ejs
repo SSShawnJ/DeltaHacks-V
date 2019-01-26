@@ -73,7 +73,7 @@
 
 <script>
       //current position
-      var pos={lat: 37.769900000000014, lng: -122.45740000000015};
+      var pos={lat: 37.8097222, lng: -122.4758889};
       var last_update_search_pos;
       var request = {
             location: pos,
@@ -108,7 +108,7 @@
 
 
     map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 15,
+      zoom: 14,
       center: pos,
       styles: [
         // { elementType: 'geometry', stylers: [{ color: '#043475' }] },
@@ -178,18 +178,18 @@
     
 
     markers.push(userLocation);
-    for (var i = 0; i < 8; i++) {
-      markers.push(new google.maps.Marker({
-        icon: {
-      path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-      strokeColor: '#CD2B8F',
+    // for (var i = 0; i < 8; i++) {
+    //   markers.push(new google.maps.Marker({
+    //     icon: {
+    //   path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+    //   strokeColor: '#CD2B8F',
       
-      strokeWeight: 3,
-      scale: 6,
-        },
-        map: map
-      }));
-    }
+    //   strokeWeight: 3,
+    //   scale: 6,
+    //     },
+    //     map: map
+    //   }));
+    // }
     service.nearbySearch(request, callback);
     last_update_search_pos = userLocation.getPosition();
 
@@ -202,7 +202,7 @@
       fillOpacity: 0.35,
       map: map,
       center: pos,
-      radius: 200
+      radius: 100
     });
 
 
@@ -213,10 +213,10 @@
 
     google.maps.event.addDomListener(right, 'click', function () {
       //go right
-      if ((pos["lng"] + 0.001) > 180) {
+      if ((pos["lng"] + 0.0005) > 180) {
         pos["lng"] = pos["lng"] - 360;
       } else {
-        pos["lng"] += 0.001;
+        pos["lng"] += 0.0005;
       }
       update();
     });
@@ -225,10 +225,10 @@
     google.maps.event.addDomListener(left, 'click', function () {
       //go left
 
-      if ((pos["lng"] - 0.001) < (-180)) {
+      if ((pos["lng"] - 0.0005) < (-180)) {
         pos["lng"] = 360 + pos["lng"];
       } else {
-        pos["lng"] -= 0.001;
+        pos["lng"] -= 0.0005;
       }
       update();
     });
@@ -236,15 +236,15 @@
     google.maps.event.addDomListener(down, 'click', function () {
       // go down
 
-      if ((pos["lat"] - 0.001) >= (-90)) {
-        pos["lat"] -= 0.001;
+      if ((pos["lat"] - 0.0005) >= (-90)) {
+        pos["lat"] -= 0.0005;
         update();
       }
 
     });
     google.maps.event.addDomListener(up, 'click', function () {
-      if ((pos["lat"] + 0.001) <= 90) {
-        pos["lat"] += 0.001;
+      if ((pos["lat"] + 0.0005) <= 90) {
+        pos["lat"] += 0.0005;
         update();
       }
     
@@ -266,7 +266,7 @@
       updateMap();
       checkAvailableGuide();
 
-    }, 5000);
+    }, 2000);
 
   }
 
@@ -285,7 +285,7 @@
 
   function updateMap() {
     //do not update map if the user did not move much after the last update
-    if(last_update_search_pos!=null && distance(last_update_search_pos, userLocation.getPosition()) >100){
+    if(last_update_search_pos!=null && distance(last_update_search_pos, userLocation.getPosition()) >1000){
       service.nearbySearch(request, callback);
       console.log("Updated map nearbySearch");
       last_update_search_pos = userLocation.getPosition();
@@ -294,7 +294,7 @@
 
   function checkAvailableGuide(){
   places.map(function(pl){
-    if(distance(pl.geometry.location, userLocation.getPosition()) <=200){
+    if(distance(pl.geometry.location, userLocation.getPosition()) <=100){
 
       if( !hasInQueue.hasOwnProperty(pl.name)){
         queue.push(pl);
@@ -307,6 +307,7 @@
 
 function readAvailabelGuide(){
   setInterval(function () {
+    // console.log(queue);
 
     if(queue.length>0){
       var landmark=queue.shift();
@@ -339,7 +340,8 @@ function readAvailabelGuide(){
             }else{
               responsiveVoice.speak(landmark.name, "US English Female",{rate:0.9});
             }
-            
+
+            hasInQueue[landmark.name] = false;
             
         }
 
@@ -353,31 +355,63 @@ function readAvailabelGuide(){
   function callback(results, status) {
     places=[];
 
-  if(results.length < markers.length-1){
-    var i;
-    for(i=1;i<results.length;i++){
-      markers[i].setPosition(results[i].geometry.location);
-      markers[i].setTitle(results[i].name);
-      markers[i].setLabel(results[i].name);
-      markers[i].setMap(map);
+    for(i=0;i<results.length;i++){
+      var find = false;
+      for(j=0;j<markers.length;j++){
+        if(results[i].name == markers[j].getTitle()){
+          find = true;
+          break;
+        }
+      }
 
-      places.push(results[i]);
+      if (!find){
+        index = markers.length;
+        markers.push(new google.maps.Marker({
+          icon: {
+            path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+            strokeColor: '#CD2B8F',
+            
+            strokeWeight: 3,
+            scale: 6,
+          },
+          map: map
+        }));
+        markers[index].setPosition(results[i].geometry.location);
+        markers[index].setTitle(results[i].name);
+        markers[index].setLabel(results[i].name);
+        markers[index].setMap(map);
+
+        places.push(results[i]);
+      }
     }
 
-    // for(i;i<markers.length;i++){
-    //   markers[i].setMap(null);
+    // console.log(places);
+
+    // if(results.length < markers.length-1){
+    //   var i;
+    //   for(i=1;i<results.length;i++){
+    //     markers[i].setPosition(results[i].geometry.location);
+    //     markers[i].setTitle(results[i].name);
+    //     markers[i].setLabel(results[i].name);
+    //     markers[i].setMap(map);
+
+    //     places.push(results[i]);
+    //   }
+
+    //   for(i;i<markers.length;i++){
+    //     markers[i].setMap(null);
+    //   }
+
+    // }else{
+    //   for(var i=1;i<markers.length;i++){
+    //     markers[i].setPosition(results[i].geometry.location);
+    //     markers[i].setTitle(results[i].name);
+    //     markers[i].setLabel(results[i].name);
+    //     markers[i].setMap(map);
+    //     places.push(results[i]);
+    //   }
+
     // }
-
-  }else{
-    for(var i=1;i<markers.length;i++){
-      markers[i].setPosition(results[i].geometry.location);
-      markers[i].setTitle(results[i].name);
-      markers[i].setLabel(results[i].name);
-      markers[i].setMap(map);
-      places.push(results[i]);
-    }
-
-  }
   }
 
 
