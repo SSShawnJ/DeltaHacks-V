@@ -92,7 +92,7 @@
 
       var places=[];
 
-      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+      // var image = 'https://pre00.deviantart.net/eed5/th/pre/i/2015/189/2/0/super_mario_by_davemilburn-d90i0qf.png';
 
       var queue=[];
       var hasInQueue={};
@@ -157,6 +157,16 @@
     });
 
     service = new google.maps.places.PlacesService(map);
+
+    var image = {
+        url: 'https://pre00.deviantart.net/eed5/th/pre/i/2015/189/2/0/super_mario_by_davemilburn-d90i0qf.png',
+        // This marker is 20 pixels wide by 32 pixels high.
+        scaledSize: new google.maps.Size(40, 40), // scaled size
+                // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(20, 20)
+      };
 
 
     userLocation = new google.maps.Marker({
