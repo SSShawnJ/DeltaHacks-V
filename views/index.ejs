@@ -74,6 +74,7 @@
 <script>
       //current position
       var pos={lat: 37.769900000000014, lng: -122.45740000000015};
+      var last_update_search_pos;
       var request = {
             location: pos,
             radius: '2000',
@@ -163,6 +164,7 @@
       map: map,
       icon: image
     });
+
     
 
     markers.push(userLocation);
@@ -179,6 +181,7 @@
       }));
     }
     service.nearbySearch(request, callback);
+    last_update_search_pos = userLocation.getPosition();
 
 
     UserCircle = new google.maps.Circle({
@@ -271,9 +274,12 @@
 
 
   function updateMap() {
-        
-    service.nearbySearch(request, callback);
-
+    //do not update map if the user did not move much after the last update
+    if(last_update_search_pos!=null && distance(last_update_search_pos, userLocation.getPosition()) >100){
+      service.nearbySearch(request, callback);
+      console.log("Updated map nearbySearch");
+      last_update_search_pos = userLocation.getPosition();
+    }
   }
 
   function checkAvailableGuide(){
@@ -319,9 +325,9 @@ function readAvailabelGuide(){
             // });
 
             content[landmark.name]=text;
-             responsiveVoice.speak(text, "UK English Male",{rate:0.8});
+             responsiveVoice.speak(text, "US English Female",{rate:0.9});
             }else{
-              responsiveVoice.speak(landmark.name, "UK English Male",{rate:0.8});
+              responsiveVoice.speak(landmark.name, "US English Female",{rate:0.9});
             }
             
             
@@ -348,9 +354,9 @@ function readAvailabelGuide(){
       places.push(results[i]);
     }
 
-    for(i;i<markers.length;i++){
-      markers[i].setMap(null);
-    }
+    // for(i;i<markers.length;i++){
+    //   markers[i].setMap(null);
+    // }
 
   }else{
     for(var i=1;i<markers.length;i++){
@@ -368,7 +374,7 @@ function readAvailabelGuide(){
 </script>
 
 <script src="libs/jquery.min.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpSAXsBvs1m0o5SUlF54Z8bFM6DPNvnQk&callback=initMap&libraries=places,geometry">
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCoalxf3cWk2d0X2ifrobf-ifYPYcBPsyw&callback=initMap&libraries=places,geometry">
 </script>
 <script src="js/bootstrap.min.js"></script>
 <script src="script/script.js"></script>
