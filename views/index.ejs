@@ -32,7 +32,7 @@
 
     <div class="row row-content" style="background-color: black">
 <div class="col-sm-12 col-xs-12">
-  <h2 style="color:white;text-indent: 10px"><span class="glyphicon glyphicon-map-marker"></span> Tour++ <small style="color:white;col-xs-12">Your Fantastic Partner On The Way</small>
+  <h2 style="color:white;text-indent: 10px"><span class="glyphicon glyphicon-map-marker"></span> Tour++ |<small style="color:white;col-xs-12"> Your Fantastic Partner On The Way</small>
 </h2>
 </div>
 </div>
@@ -108,7 +108,7 @@
 
 
     map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 14,
+      zoom: 16,
       center: pos,
       styles: [
         // { elementType: 'geometry', stylers: [{ color: '#043475' }] },
@@ -172,7 +172,8 @@
     userLocation = new google.maps.Marker({
       position: pos,
       map: map,
-      icon: image
+      icon: image,
+      zIndex:1000
     });
 
     
@@ -196,13 +197,14 @@
 
     UserCircle = new google.maps.Circle({
       strokeColor: 'blue',
-      strokeOpacity: 0.7,
+      strokeOpacity: 0.8,
       strokeWeight: 2,
       fillColor: 'white',
       fillOpacity: 0.35,
       map: map,
       center: pos,
-      radius: 100
+      radius: 100,
+      zIndex: 1000
     });
 
 
@@ -351,14 +353,15 @@ function readAvailabelGuide(){
 
   },2000);
 }
-
+//places[2].photos[0].getUrl
   function callback(results, status) {
+    console.log(results);
     places=[];
 
     for(i=0;i<results.length;i++){
       var find = false;
       for(j=0;j<markers.length;j++){
-        if(results[i].name == markers[j].getTitle()){
+        if(results[i] != undefined && results[i].name == markers[j].getTitle()){
           find = true;
           break;
         }
@@ -366,19 +369,53 @@ function readAvailabelGuide(){
 
       if (!find){
         index = markers.length;
-        markers.push(new google.maps.Marker({
-          icon: {
+        console.log(index,results[i].photos)
+        var icon_image;
+        var image_url = undefined
+        if (results[i] !=undefined && results[i].photos !=undefined){
+          image_url = results[i].photos[0].getUrl();
+        }
+
+        if (image_url ==undefined){ 
+          icon_image = {
             path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
             strokeColor: '#CD2B8F',
             
             strokeWeight: 3,
             scale: 6,
-          },
+          }
+        }else{
+          // var shape = {
+          // coords: [20,20,5],
+          // type: 'circle'
+          // };
+
+
+          icon_image =  {
+            url: image_url,
+            // This marker is 20 pixels wide by 32 pixels high.
+            scaledSize: new google.maps.Size(40, 40), // scaled size
+                    // The origin for this image is (0, 0).
+            origin: new google.maps.Point(0, 0),
+
+            labelOrigin: new google.maps.Point(20, 45),
+
+            // shape: shape,
+            // // The anchor for this image is the base of the flagpole at (0, 32).
+            // anchor: new google.maps.Point(20, 20)
+          };
+        }
+
+        
+
+        markers.push(new google.maps.Marker({
+          icon: icon_image,
           map: map
         }));
         markers[index].setPosition(results[i].geometry.location);
         markers[index].setTitle(results[i].name);
-        markers[index].setLabel(results[i].name);
+        markers[index].setLabel({text:results[i].name,fontSize: "10px"});
+        
         markers[index].setMap(map);
 
         places.push(results[i]);
