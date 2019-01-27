@@ -346,7 +346,7 @@ function readAvailabelGuide(){
                 if( ( typeof text === "undefined") || text==''){
                   text=landmark.name;
                   if (!responsiveVoice.isPlaying()){
-                    responsiveVoice.speak("You may abel to see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
+                    responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
                   }
                   return
                 }
@@ -364,10 +364,10 @@ function readAvailabelGuide(){
                 }
 
 
-                responsiveVoice.speak("You may abel to see the "+landmark.name+" to your "+ direction +" . "+text, "US English Female",{rate:0.9});
+                responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" . "+text, "US English Female",{rate:0.9});
             }else{
               if (!responsiveVoice.isPlaying()){
-                responsiveVoice.speak("You may abel to see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
+                responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
               }
             }
 
@@ -409,6 +409,12 @@ function getCompassDirectoin(destination_x, origin_x, destination_y, origin_y){
     // places=[];
 
     for(i=0;i<results.length;i++){
+      var name = results[i].name.toLowerCase();
+      if (name.includes("hotel") || name.includes("suite" || name.includes("inn"))){
+        continue;
+      }
+
+
       var find = false;
       for(j=0;j<markers.length;j++){
         if(results[i] != undefined && results[i].name == markers[j].getTitle()){
