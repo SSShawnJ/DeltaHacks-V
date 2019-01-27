@@ -345,9 +345,13 @@ function readAvailabelGuide(){
                 console.log(text);
                 if( ( typeof text === "undefined") || text==''){
                   text=landmark.name;
-                  if (!responsiveVoice.isPlaying()){
-                    responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
+                  if (responsiveVoice.isPlaying()){
+                    responsiveVoice.cancel();
+                    wait(2000);
                   }
+                  
+                  responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
+                  
                   return
                 }
             //Get mothed
@@ -365,10 +369,15 @@ function readAvailabelGuide(){
 
 
                 responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" . "+text, "US English Female",{rate:0.9});
+                
             }else{
-              if (!responsiveVoice.isPlaying()){
+                if (responsiveVoice.isPlaying()){
+                    responsiveVoice.cancel();
+                    wait(2000);
+                  }
+              
                 responsiveVoice.speak("You may see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
-              }
+              
             }
 
             hasInQueue[landmark.name] = false;
@@ -510,7 +519,7 @@ function getCompassDirectoin(destination_x, origin_x, destination_y, origin_y){
 </script>
 
 <script src="libs/jquery.min.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCoalxf3cWk2d0X2ifrobf-ifYPYcBPsyw&callback=initMap&libraries=places,geometry">
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiazGDhhv59raNduiWCo15Cuvu3Vy9dmU&callback=initMap&libraries=places,geometry">
 </script>
 <script src="js/bootstrap.min.js"></script>
 <script src="script/script.js"></script>
