@@ -323,6 +323,15 @@ function readAvailabelGuide(){
 
       var WikiUrl='https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&callback=wikiCallback&redirects&titles='+landmark.name;
 
+
+      var direction = getCompassDirectoin(
+        landmark.geometry.location.lat(),
+        userLocation.getPosition().lat(),
+        landmark.geometry.location.lng(),
+        userLocation.getPosition().lng()
+      );
+      console.log(direction);
+
       $.ajax({
         url:WikiUrl,
         dataType: 'jsonp',
@@ -337,7 +346,7 @@ function readAvailabelGuide(){
                 if( ( typeof text === "undefined") || text==''){
                   text=landmark.name;
                   if (!responsiveVoice.isPlaying()){
-                    responsiveVoice.speak("You are at the "+landmark.name+".", "US English Female",{rate:0.9});
+                    responsiveVoice.speak("You may abel to see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
                   }
                   return
                 }
@@ -355,10 +364,10 @@ function readAvailabelGuide(){
                 }
 
 
-                responsiveVoice.speak("You are at the "+landmark.name+". "+text, "US English Female",{rate:0.9});
+                responsiveVoice.speak("You may abel to see the "+landmark.name+" to your "+ direction +" . "+text, "US English Female",{rate:0.9});
             }else{
               if (!responsiveVoice.isPlaying()){
-                responsiveVoice.speak("You are at the "+landmark.name+".", "US English Female",{rate:0.9});
+                responsiveVoice.speak("You may abel to see the "+landmark.name+" to your "+ direction +" .", "US English Female",{rate:0.9});
               }
             }
 
@@ -379,7 +388,21 @@ function wait(ms){
        while(end < start + ms) {
          end = new Date().getTime();
       }
-    }
+}
+
+function getCompassDirectoin(destination_x, origin_x, destination_y, origin_y){
+    deltaX = destination_x - origin_x;
+    deltaY = destination_y - origin_y;
+    degrees_temp = Math.atan2(deltaX, deltaY)/Math.PI*180; // -180 ~180
+    
+    degrees_final = 180 + degrees_temp;  // 0 ~ 360
+
+    console.log(degrees_final);
+    compass_brackets = ["West",  "South West", "South", "South East","East", "North East", "North", "North West", "West"];
+    compass_lookup = Math.round(degrees_final / 45);
+    return compass_brackets[compass_lookup];
+}
+
 //places[2].photos[0].getUrl
   function callback(results, status) {
     // console.log(results);
