@@ -39,7 +39,7 @@
 
 <div class="row row-content" style="background-color:yellow;">
 <div class="col-sm-12">
-  <h3 class="col-xs-12"><span class="glyphicon glyphicon-search "></span> Manual Manipulations Control</h3>
+  <h3 class="col-xs-12"><span class="glyphicon glyphicon-search "></span> Manual Manipulations Control (Demo Only)</h3>
     <table>
       <tr>
           <td></td>
@@ -66,7 +66,13 @@
 <div class="row row-content">
   <div id="map" style="width:100% col-xs-12" ></div>
 </div>
-<div class="row row-footer"></div>
+    <div class="col-xs-12" style="background-color: black; height:30;">
+
+<div>
+  <h3 style="color:white; text-align: center; font-size: 10px;">     Copyright © 2019 – Tour++
+
+</div>
+</div>
 </div>
 </body>
 
@@ -327,20 +333,33 @@ function readAvailabelGuide(){
             if( !( typeof response === "undefined")){
                 var k= Object.keys(response.query.pages);
                 text=response.query.pages[k[0]].extract;
-            console.log(text);
-             if( ( typeof text === "undefined") || text==''){
-               text=landmark.name;
-             }
+                console.log(text);
+                if( ( typeof text === "undefined") || text==''){
+                  text=landmark.name;
+                  if (!responsiveVoice.isPlaying()){
+                    responsiveVoice.speak("You are at the "+landmark.name+".", "US English Female",{rate:0.9});
+                  }
+                  return
+                }
             //Get mothed
             // var parameters={url:response[3][0]};
             // $.get('/geturl',parameters,function(data){
             //   text=data;
             // });
 
-            content[landmark.name]=text;
-             responsiveVoice.speak(text, "US English Female",{rate:0.9});
+            // content[landmark.name]=text;
+            console.log(responsiveVoice.isPlaying());
+                if (responsiveVoice.isPlaying()){
+                  responsiveVoice.cancel();
+                  wait(2000);
+                }
+
+
+                responsiveVoice.speak("You are at the "+landmark.name+". "+text, "US English Female",{rate:0.9});
             }else{
-              responsiveVoice.speak(landmark.name, "US English Female",{rate:0.9});
+              if (!responsiveVoice.isPlaying()){
+                responsiveVoice.speak("You are at the "+landmark.name+".", "US English Female",{rate:0.9});
+              }
             }
 
             hasInQueue[landmark.name] = false;
@@ -353,10 +372,18 @@ function readAvailabelGuide(){
 
   },2000);
 }
+
+function wait(ms){
+       var start = new Date().getTime();
+       var end = start;
+       while(end < start + ms) {
+         end = new Date().getTime();
+      }
+    }
 //places[2].photos[0].getUrl
   function callback(results, status) {
-    console.log(results);
-    places=[];
+    // console.log(results);
+    // places=[];
 
     for(i=0;i<results.length;i++){
       var find = false;
@@ -369,7 +396,7 @@ function readAvailabelGuide(){
 
       if (!find){
         index = markers.length;
-        console.log(index,results[i].photos)
+        // console.log(index,results[i].photos)
         var icon_image;
         var image_url = undefined
         if (results[i] !=undefined && results[i].photos !=undefined){
@@ -421,7 +448,6 @@ function readAvailabelGuide(){
         places.push(results[i]);
       }
     }
-
     // console.log(places);
 
     // if(results.length < markers.length-1){
