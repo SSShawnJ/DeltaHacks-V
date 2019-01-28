@@ -1,5 +1,5 @@
 # Tour++ | DeltaHacks-V
-<img src="https://github.com/SSShawnJ/DeltaHacks-V/blob/master/Tour++.png" width="600" height="300">
+<img src="https://github.com/SSShawnJ/DeltaHacks-V/blob/master/Tour++.png" width="500" height="300">
 ## Inspiration
 When we travel to a new city, there are some points of interests (POI) that we all want to visit. However, most of us may just spend several minutes taking some photos and leave. We think this kind of travel experience is NOT OPTIMUM! We do think the tourists would like to know more about the history background and the fun story behind these famous points of interests. 
 
